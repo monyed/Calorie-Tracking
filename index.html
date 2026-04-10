@@ -185,7 +185,13 @@ input[readonly]{opacity:.65;cursor:default}
 
   <!-- HISTORY -->
   <div id="paneHistory" class="pane">
-    <div class="card"><div class="clabel">ประวัติทั้งหมด</div><div id="histList"><div class="empty">ยังไม่มีประวัติ</div></div></div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="clabel" style="margin-bottom:0">ประวัติทั้งหมด</div>
+        <button class="btn btn-sm" onclick="clearAllHistory()" style="background:var(--rbg);color:var(--rt)">🗑 ล้างทั้งหมด</button>
+      </div>
+      <div id="histList"><div class="empty">ยังไม่มีประวัติ</div></div>
+    </div>
   </div>
 
   <!-- TREND -->
@@ -544,6 +550,21 @@ function renderHistory(){
     </div>`;
   }).join('');
 }
+function clearAllHistory(){
+  const hist=getAllHist();
+  if(!hist.length){showToast('ไม่มีประวัติ');return;}
+  if(!confirm(`ล้างประวัติทั้งหมด ${hist.length} วัน? ไม่สามารถกู้คืนได้`))return;
+  // ลบ localStorage keys ทั้งหมดที่เป็น ct4_d_
+  const keys=[];
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('ct4_d_'))keys.push(k);}
+  keys.forEach(k=>localStorage.removeItem(k));
+  // เพิ่ม tombstone ให้ imported ทุกวัน
+  Object.keys(IMP).forEach(k=>{
+    localStorage.setItem(hKey(k),JSON.stringify({key:k,items:[],cal:0,p:0,c:0,f:0,deleted:true}));
+  });
+  expanded={};renderHistory();showToast('ล้างประวัติทั้งหมดแล้ว');
+}
+
 function toggleDay(k){expanded[k]=!expanded[k];renderHistory();}
 function deleteHistDay(k){
   if(!confirm(`ลบข้อมูล ${kDisp(k)} ออก?`))return;
