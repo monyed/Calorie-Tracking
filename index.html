@@ -116,6 +116,8 @@ input[readonly]{opacity:.65;cursor:default}
 .wstat{background:var(--card2);border-radius:var(--rs);padding:9px 10px;text-align:center}
 .wstat-val{font-family:'DM Mono',monospace;font-size:15px;font-weight:500}
 .wstat-lbl{font-size:10px;color:var(--t2);margin-top:2px}
+.cheat-badge{display:inline-block;font-size:10px;font-weight:600;background:#FFF3E0;color:#E65100;padding:2px 8px;border-radius:99px;margin-left:5px}
+@media(prefers-color-scheme:dark){.cheat-badge{background:#3E2000;color:#FFB74D}}
 </style>
 </head>
 <body>
@@ -131,6 +133,7 @@ input[readonly]{opacity:.65;cursor:default}
     <button class="tab active" onclick="switchTab('Log',this)">บันทึก</button>
     <button class="tab" onclick="switchTab('History',this)">ประวัติ</button>
     <button class="tab" onclick="switchTab('Trend',this)">กราฟ</button>
+    <button class="tab" onclick="switchTab('Body',this)">ร่างกาย</button>
     <button class="tab" onclick="switchTab('Foods',this)">เมนู</button>
     <button class="tab" onclick="switchTab('Settings',this)">ตั้งค่า</button>
   </div>
@@ -166,6 +169,11 @@ input[readonly]{opacity:.65;cursor:default}
         <button class="btn btn-green" onclick="saveToHistory()">บันทึกลงประวัติ</button>
         <button class="btn btn-sm btn-outline" onclick="showCopyPicker()" style="padding:8px 12px">📋 ก็อปจากวันอื่น</button>
         <span class="save-status" id="ss"></span>
+      </div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--b)">
+        <button id="cheatBtn" onclick="toggleCheatDay()" style="width:100%;padding:10px;border-radius:var(--rs);border:1.5px dashed var(--b2);background:none;color:var(--t2);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s">
+          🍕 ทำเครื่องหมายวันนี้เป็น Cheat Day
+        </button>
       </div>
     </div>
     <div class="card">
@@ -226,6 +234,65 @@ input[readonly]{opacity:.65;cursor:default}
         <span><span class="ldot" style="background:#B87333"></span>Fat</span>
       </div>
       <div class="chart-wrap" style="height:180px"><canvas id="mCh" role="img" aria-label="กราฟ macro">macro</canvas></div>
+    </div>
+  </div>
+
+  <!-- BODY METRICS -->
+  <div id="paneBody" class="pane">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="clabel" style="margin-bottom:0">บันทึกข้อมูลร่างกาย</div>
+      </div>
+      <div class="date-strip" style="margin-bottom:12px;padding-bottom:12px">
+        <div class="field"><label>วัน</label><input type="number" id="bDay" min="1" max="31" oninput="updateBodyDateLabel()"></div>
+        <div class="field"><label>เดือน</label><input type="number" id="bMonth" min="1" max="12" oninput="updateBodyDateLabel()"></div>
+        <div class="field"><label>ปี พ.ศ.</label><input type="number" id="bYear" min="2560" max="2600" oninput="updateBodyDateLabel()"></div>
+        <div class="field"><label>&nbsp;</label><div class="date-display" id="bodyDateDisp"></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+        <div class="field">
+          <label>น้ำหนัก (kg)</label>
+          <input type="number" id="bWeight" placeholder="89.0" step="0.1" min="0" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label>SMM (kg)</label>
+          <input type="number" id="bSMM" placeholder="40.0" step="0.1" min="0" inputmode="decimal">
+          <div style="font-size:10px;color:var(--t3);margin-top:2px">Skeletal Muscle Mass</div>
+        </div>
+        <div class="field">
+          <label>PBF (%)</label>
+          <input type="number" id="bPBF" placeholder="21.9" step="0.1" min="0" max="100" inputmode="decimal">
+          <div style="font-size:10px;color:var(--t3);margin-top:2px">Percent Body Fat</div>
+        </div>
+      </div>
+      <button class="btn btn-green" style="width:100%;padding:12px" onclick="saveBodyEntry()">บันทึกข้อมูลร่างกาย</button>
+      <div id="bodyStatus" style="font-size:12px;color:var(--t3);margin-top:8px;text-align:center"></div>
+    </div>
+
+    <div class="card" id="bodyLatestCard" style="display:none">
+      <div class="clabel">ล่าสุด</div>
+      <div class="m2" id="bodyLatest"></div>
+    </div>
+
+    <div class="card" id="bodyChartCard" style="display:none">
+      <div class="clabel">น้ำหนัก (kg)</div>
+      <div class="chart-wrap" style="height:160px"><canvas id="bWeightChart" role="img" aria-label="กราฟน้ำหนัก">น้ำหนัก</canvas></div>
+    </div>
+    <div class="card" id="bodySMMCard" style="display:none">
+      <div class="clabel">SMM — Skeletal Muscle Mass (kg)</div>
+      <div class="chart-wrap" style="height:160px"><canvas id="bSMMChart" role="img" aria-label="กราฟ SMM">SMM</canvas></div>
+    </div>
+    <div class="card" id="bodyPBFCard" style="display:none">
+      <div class="clabel">PBF — Percent Body Fat (%)</div>
+      <div class="chart-wrap" style="height:160px"><canvas id="bPBFChart" role="img" aria-label="กราฟ PBF">PBF</canvas></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="clabel" style="margin-bottom:0">ประวัติ</div>
+        <button class="btn btn-sm" onclick="clearAllBodyData()" style="background:var(--rbg);color:var(--rt)">🗑 ล้างทั้งหมด</button>
+      </div>
+      <div id="bodyHistList"><div class="empty">ยังไม่มีข้อมูล</div></div>
     </div>
   </div>
 
@@ -469,6 +536,10 @@ function getAllHist(){
       if(d){d.imported=false;m[d.key]=d;}
     }
   }
+  // เพิ่ม cheat days ที่ไม่มีอาหาร (cal=0) เข้าด้วย
+  getCheatDays().forEach(key=>{
+    if(!m[key])m[key]={key,items:[],cal:0,p:0,c:0,f:0,imported:false};
+  });
   return Object.values(m).filter(d=>!d.deleted).sort((a,b)=>a.key.localeCompare(b.key));
 }
 
@@ -477,11 +548,13 @@ function getKey(){return mkKey(+g('eDay').value,+g('eMonth').value,+g('eYear').v
 function initDate(){
   const t=nowTH();g('eDay').value=t.d;g('eMonth').value=t.m;g('eYear').value=t.y;
   updateDateLabel();const ex=loadDay(getKey());if(ex)foods=[...ex.items];
+  updateCheatBtn();
 }
 function onDateChange(){
   updateDateLabel();const ex=loadDay(getKey());
   if(ex){foods=[...ex.items];g('ss').textContent='โหลดข้อมูลของวันนี้';}
   else{foods=[];g('ss').textContent='';}
+  updateCheatBtn();
   renderLog();
 }
 function updateDateLabel(){
@@ -570,21 +643,29 @@ function renderHistory(){
   if(!hist.length){hl.innerHTML='<div class="empty">ยังไม่มีประวัติ</div>';return;}
   const t=nowTH();const tk=mkKey(t.d,t.m,t.y);
   hl.innerHTML=[...hist].reverse().map(d=>{
-    const stat=calStat(d.cal,s.min,s.max);const pct=Math.min(100,Math.round(d.cal/s.max*100));const zS=Math.round(s.min/s.max*100);
-    const isExp=expanded[d.key];const isT=d.key===tk;const bCol=stat==='over'?'#C0392B':stat==='under'?'#1A5FA8':'#1A8C5F';
+    const cheat=isCheatDay(d.key);
+    const stat=cheat&&d.cal===0?'cheat':calStat(d.cal,s.min,s.max);
+    const pct=Math.min(100,s.max>0?Math.round(d.cal/s.max*100):0);
+    const zS=Math.round(s.min/s.max*100);
+    const isExp=expanded[d.key];const isT=d.key===tk;
+    const bCol=stat==='over'?'#C0392B':stat==='under'?'#1A5FA8':stat==='cheat'?'#E65100':'#1A8C5F';
+    const calDisplay=cheat&&d.cal===0?'Cheat Day':d.cal.toLocaleString()+' kcal';
+    const badgeHtml=cheat&&d.cal===0
+      ?'<span class="cheat-badge">🍕 Cheat</span>'
+      :`${calBadge(stat)}${cheat?'<span class="cheat-badge">🍕 Cheat</span>':''}`;
     const canDel=true;
     return`<div class="hist-item">
       <div class="hist-header" onclick="toggleDay('${d.key}')">
         <span class="hist-date">${kDisp(d.key)}${isT?'<span class="today-badge">วันนี้</span>':''}${d.imported?'<span class="imported-tag">นำเข้า</span>':''}</span>
         <div class="hist-right">
-          <span class="hist-kcal" style="color:${calCol(stat)}">${d.cal.toLocaleString()}</span>
-          ${calBadge(stat)}
+          <span class="hist-kcal" style="color:${bCol}">${calDisplay}</span>
+          ${badgeHtml}
           ${canDel?`<button class="del-btn" onclick="event.stopPropagation();deleteHistDay('${d.key}')" title="ลบ" style="font-size:13px">🗑</button>`:''}
           <span style="font-size:10px;color:var(--t3)">${isExp?'▲':'▼'}</span>
         </div>
       </div>
       <div class="pbar-track" style="margin-top:8px;height:5px"><div class="pbar-zone" style="left:${zS}%;width:${100-zS}%"></div><div class="pbar-fill" style="width:${pct}%;background:${bCol}"></div></div>
-      ${isExp?`<div class="hist-foods"><div class="hist-macros">P ${d.p}g · C ${d.c}g · F ${d.f}g</div>${d.items.map(it=>`<div class="hist-food-row"><span>${it.name} (${it.unitLabel||it.qty+'g'})</span><span>${it.cal} kcal</span></div>`).join('')}</div>`:''}
+      ${isExp?`<div class="hist-foods"><div class="hist-macros">P ${d.p}g · C ${d.c}g · F ${d.f}g</div>${d.items.length?d.items.map(it=>`<div class="hist-food-row"><span>${it.name} (${it.unitLabel||it.qty+'g'})</span><span>${it.cal} kcal</span></div>`).join(''):'<div style="font-size:12px;color:var(--t3);padding:4px 0">ไม่ได้บันทึกอาหาร</div>'}</div>`:''}
     </div>`;
   }).join('');
 }
@@ -789,6 +870,37 @@ function renderDBList(){
   el.innerHTML=items.map(d=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:7px 0;border-bottom:1px solid var(--b);color:var(--t2)"><span>${d.name}</span><span style="font-family:'DM Mono',monospace">${d.cal}${d.unit==='g'?' kcal/g':' kcal'}</span></div>`).join('');
 }
 
+// Cheat day
+function getCheatDays(){return JSON.parse(localStorage.getItem('ct4_cheat')||'[]');}
+function saveCheatDays(arr){localStorage.setItem('ct4_cheat',JSON.stringify(arr));}
+function isCheatDay(key){return getCheatDays().includes(key);}
+function toggleCheatDay(){
+  const key=getKey();const arr=getCheatDays();const idx=arr.indexOf(key);
+  if(idx>=0){
+    arr.splice(idx,1);
+    // ถ้าไม่มีอาหารด้วย ลบออกจาก history
+    if(!foods.length)localStorage.removeItem(hKey(key));
+    showToast('ยกเลิก Cheat Day แล้ว');
+  } else {
+    arr.push(key);
+    // auto save เข้าประวัติเสมอ แม้ไม่มีอาหาร
+    const existing=loadDay(key);
+    if(!existing){saveDay(key,foods);}
+    showToast('🍕 บันทึก Cheat Day แล้ว!');
+  }
+  saveCheatDays(arr);updateCheatBtn();
+}
+function updateCheatBtn(){
+  const key=getKey();const isCheat=isCheatDay(key);const btn=g('cheatBtn');if(!btn)return;
+  if(isCheat){
+    btn.style.background='#FFF3E0';btn.style.color='#E65100';btn.style.borderColor='#E65100';
+    btn.textContent='🍕 Cheat Day (กดเพื่อยกเลิก)';
+  } else {
+    btn.style.background='none';btn.style.color='var(--t2)';btn.style.borderColor='var(--b2)';
+    btn.textContent='🍕 ทำเครื่องหมายวันนี้เป็น Cheat Day';
+  }
+}
+
 // Copy day from previous
 let copySourceKey=null;
 function showCopyPicker(){
@@ -816,12 +928,147 @@ function doCopyDay(){
   renderLog();showToast(`ก็อปเมนูจาก ${kDisp(copySourceKey)} แล้ว`);
 }
 
+// Body metrics
+let bWeightChart=null,bSMMChart=null,bPBFChart=null;
+
+function getBodyData(){return JSON.parse(localStorage.getItem('ct4_body')||'[]');}
+function saveBodyData(arr){localStorage.setItem('ct4_body',JSON.stringify(arr));}
+
+function updateBodyDateLabel(){
+  const d=+g('bDay').value,m=+g('bMonth').value,y=+g('bYear').value;
+  if(!d||!m||!y)return;
+  const t=nowTH();const isT=d===t.d&&m===t.m&&y===t.y;
+  g('bodyDateDisp').innerHTML=`${d} ${MO[m-1]} ${y}${isT?'<span class="today-badge">วันนี้</span>':''}`;
+  // โหลดข้อมูลของวันนั้นถ้ามี
+  const key=mkKey(d,m,y);
+  const existing=getBodyData().find(e=>e.key===key);
+  if(existing){
+    g('bWeight').value=existing.weight||'';
+    g('bSMM').value=existing.smm||'';
+    g('bPBF').value=existing.pbf||'';
+  } else {
+    g('bWeight').value='';g('bSMM').value='';g('bPBF').value='';
+  }
+}
+
+function saveBodyEntry(){
+  const d=+g('bDay').value,m=+g('bMonth').value,y=+g('bYear').value;
+  if(!d||!m||!y){showToast('ใส่วันที่ด้วย');return;}
+  const weight=parseFloat(g('bWeight').value)||null;
+  const smm=parseFloat(g('bSMM').value)||null;
+  const pbf=parseFloat(g('bPBF').value)||null;
+  if(!weight&&!smm&&!pbf){showToast('ใส่ค่าอย่างน้อย 1 อย่าง');return;}
+  const key=mkKey(d,m,y);
+  const arr=getBodyData().filter(e=>e.key!==key);
+  arr.push({key,date:`${d}/${m}/${thToCE(y)}`,weight,smm,pbf});
+  arr.sort((a,b)=>a.key.localeCompare(b.key));
+  saveBodyData(arr);
+  g('bodyStatus').textContent='บันทึกแล้ว '+new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+  showToast('บันทึกข้อมูลร่างกายแล้ว!');
+  renderBodyCharts();
+}
+
+function deleteBodyEntry(key){
+  if(!confirm(`ลบข้อมูล ${kDisp(key)}?`))return;
+  saveBodyData(getBodyData().filter(e=>e.key!==key));
+  renderBodyCharts();showToast('ลบแล้ว');
+}
+
+function clearAllBodyData(){
+  if(!confirm('ล้างข้อมูลร่างกายทั้งหมด?'))return;
+  localStorage.removeItem('ct4_body');
+  renderBodyCharts();showToast('ล้างแล้ว');
+}
+
+function renderBodyCharts(){
+  const arr=getBodyData();
+  if(bWeightChart){bWeightChart.destroy();bWeightChart=null;}
+  if(bSMMChart){bSMMChart.destroy();bSMMChart=null;}
+  if(bPBFChart){bPBFChart.destroy();bPBFChart=null;}
+
+  // ประวัติ
+  const hl=g('bodyHistList');
+  if(!arr.length){
+    hl.innerHTML='<div class="empty">ยังไม่มีข้อมูล</div>';
+    g('bodyLatestCard').style.display='none';
+    g('bodyChartCard').style.display='none';
+    g('bodySMMCard').style.display='none';
+    g('bodyPBFCard').style.display='none';
+    return;
+  }
+
+  // latest
+  const last=arr[arr.length-1];
+  g('bodyLatestCard').style.display='';
+  g('bodyLatest').innerHTML=`
+    ${last.weight!=null?`<div class="metric"><div class="metric-lbl">น้ำหนัก</div><div class="metric-val" style="font-size:22px">${last.weight}</div><div class="metric-sub">kg · ${kDisp(last.key)}</div></div>`:''}
+    ${last.smm!=null?`<div class="metric"><div class="metric-lbl">SMM</div><div class="metric-val" style="font-size:22px;color:var(--green)">${last.smm}</div><div class="metric-sub">kg</div></div>`:''}
+    ${last.pbf!=null?`<div class="metric"><div class="metric-lbl">PBF</div><div class="metric-val" style="font-size:22px;color:var(--blue)">${last.pbf}</div><div class="metric-sub">%</div></div>`:''}
+  `;
+
+  hl.innerHTML=[...arr].reverse().map(e=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;background:var(--card2);border-radius:var(--rs);padding:10px 12px;margin-bottom:6px">
+      <div>
+        <div style="font-size:13px;font-weight:500">${kDisp(e.key)}</div>
+        <div style="font-size:11px;color:var(--t2);font-family:'DM Mono',monospace;margin-top:2px">
+          ${e.weight!=null?`น้ำหนัก ${e.weight}kg`:''}
+          ${e.smm!=null?` · SMM ${e.smm}kg`:''}
+          ${e.pbf!=null?` · PBF ${e.pbf}%`:''}
+        </div>
+      </div>
+      <button class="del-btn" onclick="deleteBodyEntry('${e.key}')">🗑</button>
+    </div>
+  `).join('');
+
+  const dk=matchMedia('(prefers-color-scheme: dark)').matches;
+  const tc=dk?'rgba(255,255,255,.4)':'rgba(0,0,0,.35)';
+  const gc=dk?'rgba(255,255,255,.06)':'rgba(0,0,0,.05)';
+  const labels=arr.map(e=>kShort(e.key));
+  const ptOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,font:{size:10},maxRotation:45},grid:{color:gc}},y:{ticks:{color:tc,font:{size:10}},grid:{color:gc}}}};
+
+  const hasWeight=arr.some(e=>e.weight!=null);
+  const hasSMM=arr.some(e=>e.smm!=null);
+  const hasPBF=arr.some(e=>e.pbf!=null);
+
+  g('bodyChartCard').style.display=hasWeight?'':'none';
+  g('bodySMMCard').style.display=hasSMM?'':'none';
+  g('bodyPBFCard').style.display=hasPBF?'':'none';
+
+  if(hasWeight){
+    bWeightChart=new Chart(g('bWeightChart'),{type:'line',data:{labels,datasets:[{
+      data:arr.map(e=>e.weight),borderColor:'#1C1B18',backgroundColor:'rgba(28,27,24,.07)',
+      fill:true,tension:.3,pointRadius:5,pointBackgroundColor:'#1C1B18',
+      spanGaps:true
+    }]},options:{...ptOpts,scales:{...ptOpts.scales,y:{...ptOpts.scales.y,ticks:{...ptOpts.scales.y.ticks,callback:v=>v+'kg'}}}}});
+  }
+  if(hasSMM){
+    bSMMChart=new Chart(g('bSMMChart'),{type:'line',data:{labels,datasets:[{
+      data:arr.map(e=>e.smm),borderColor:'#1A8C5F',backgroundColor:'rgba(26,140,95,.08)',
+      fill:true,tension:.3,pointRadius:5,pointBackgroundColor:'#1A8C5F',
+      spanGaps:true
+    }]},options:{...ptOpts,scales:{...ptOpts.scales,y:{...ptOpts.scales.y,ticks:{...ptOpts.scales.y.ticks,callback:v=>v+'kg'}}}}});
+  }
+  if(hasPBF){
+    bPBFChart=new Chart(g('bPBFChart'),{type:'line',data:{labels,datasets:[{
+      data:arr.map(e=>e.pbf),borderColor:'#1A5FA8',backgroundColor:'rgba(26,95,168,.08)',
+      fill:true,tension:.3,pointRadius:5,pointBackgroundColor:'#1A5FA8',
+      spanGaps:true
+    }]},options:{...ptOpts,scales:{...ptOpts.scales,y:{...ptOpts.scales.y,ticks:{...ptOpts.scales.y.ticks,callback:v=>v+'%'}}}}});
+  }
+}
+
+function initBodyDate(){
+  const t=nowTH();g('bDay').value=t.d;g('bMonth').value=t.m;g('bYear').value=t.y;
+  updateBodyDateLabel();
+}
+
 function switchTab(tab,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
-  ['paneLog','paneHistory','paneTrend','paneFoods','paneSettings'].forEach(p=>{const el=g(p);if(el)el.classList.remove('active');});
+  ['paneLog','paneHistory','paneTrend','paneBody','paneFoods','paneSettings'].forEach(p=>{const el=g(p);if(el)el.classList.remove('active');});
   g('pane'+tab).classList.add('active');
   if(tab==='History')renderHistory();
   if(tab==='Trend')renderTrend();
+  if(tab==='Body'){initBodyDate();renderBodyCharts();}
   if(tab==='Foods'){renderCustomFoods();renderDBList();}
 }
 
