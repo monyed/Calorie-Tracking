@@ -8,8 +8,25 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
+/* ===== THEMES ===== */
+/* Default */
 :root{--bg:#F7F6F2;--card:#FFF;--card2:#F0EFE9;--b:rgba(0,0,0,.08);--b2:rgba(0,0,0,.14);--t:#1C1B18;--t2:#6B6860;--t3:#A8A69E;--green:#1A8C5F;--gbg:#E8F5EE;--gt:#0F5C3C;--blue:#1A5FA8;--bbg:#E6F0FB;--bt:#0D3D73;--red:#C0392B;--rbg:#FAEAE8;--rt:#7A2218;--purple:#5B4FCF;--amber:#B87333;--r:14px;--rs:9px;--sh:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04)}
 @media(prefers-color-scheme:dark){:root{--bg:#141412;--card:#1E1D1A;--card2:#262520;--b:rgba(255,255,255,.08);--b2:rgba(255,255,255,.14);--t:#F0EFE9;--t2:#8A8880;--t3:#5A5850;--gbg:#0F2E1E;--gt:#4DB882;--bbg:#0D1F35;--bt:#6AABEE;--rbg:#2E1210;--rt:#E87265;--sh:0 1px 3px rgba(0,0,0,.3)}}
+
+/* Dark (force) */
+[data-theme="dark"]{--bg:#141412;--card:#1E1D1A;--card2:#262520;--b:rgba(255,255,255,.08);--b2:rgba(255,255,255,.14);--t:#F0EFE9;--t2:#8A8880;--t3:#5A5850;--green:#1A8C5F;--gbg:#0F2E1E;--gt:#4DB882;--blue:#1A5FA8;--bbg:#0D1F35;--bt:#6AABEE;--red:#C0392B;--rbg:#2E1210;--rt:#E87265;--purple:#5B4FCF;--amber:#B87333;--sh:0 1px 3px rgba(0,0,0,.3)}
+
+/* Light (force) */
+[data-theme="light"]{--bg:#F7F6F2;--card:#FFF;--card2:#F0EFE9;--b:rgba(0,0,0,.08);--b2:rgba(0,0,0,.14);--t:#1C1B18;--t2:#6B6860;--t3:#A8A69E;--green:#1A8C5F;--gbg:#E8F5EE;--gt:#0F5C3C;--blue:#1A5FA8;--bbg:#E6F0FB;--bt:#0D3D73;--red:#C0392B;--rbg:#FAEAE8;--rt:#7A2218;--purple:#5B4FCF;--amber:#B87333;--sh:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04)}
+
+/* Colorblind — Deuteranopia/Protanopia (แดง-เขียว) ใช้ น้ำเงิน/ส้ม แทน */
+[data-theme="colorblind"]{--bg:#F5F5F5;--card:#FFF;--card2:#EBEBEB;--b:rgba(0,0,0,.09);--b2:rgba(0,0,0,.16);--t:#1A1A1A;--t2:#5A5A5A;--t3:#9A9A9A;--green:#0072B2;--gbg:#E0F0FB;--gt:#004C78;--blue:#0072B2;--bbg:#E0F0FB;--bt:#004C78;--red:#E69F00;--rbg:#FEF5E0;--rt:#7A5000;--purple:#CC79A7;--amber:#D55E00;--sh:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04)}
+
+/* Colorblind Dark */
+[data-theme="colorblind-dark"]{--bg:#141414;--card:#1E1E1E;--card2:#282828;--b:rgba(255,255,255,.08);--b2:rgba(255,255,255,.15);--t:#F0F0F0;--t2:#909090;--t3:#585858;--green:#56B4E9;--gbg:#0D2A38;--gt:#56B4E9;--blue:#56B4E9;--bbg:#0D2A38;--bt:#56B4E9;--red:#E69F00;--rbg:#38300D;--rt:#E69F00;--purple:#CC79A7;--amber:#D55E00;--sh:0 1px 3px rgba(0,0,0,.3)}
+
+/* High Contrast */
+[data-theme="high-contrast"]{--bg:#000;--card:#111;--card2:#1A1A1A;--b:rgba(255,255,255,.2);--b2:rgba(255,255,255,.4);--t:#FFF;--t2:#CCC;--t3:#888;--green:#00FF88;--gbg:#003320;--gt:#00FF88;--blue:#4FC3F7;--bbg:#001A2E;--bt:#4FC3F7;--red:#FF5252;--rbg:#2E0000;--rt:#FF5252;--purple:#CE93D8;--amber:#FFD740;--sh:none}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:var(--t);min-height:100vh;font-size:15px}
 .app{max-width:520px;margin:0 auto;padding-bottom:80px}
@@ -118,6 +135,18 @@ input[readonly]{opacity:.65;cursor:default}
 .wstat-lbl{font-size:10px;color:var(--t2);margin-top:2px}
 .cheat-badge{display:inline-block;font-size:10px;font-weight:600;background:#FFF3E0;color:#E65100;padding:2px 8px;border-radius:99px;margin-left:5px}
 @media(prefers-color-scheme:dark){.cheat-badge{background:#3E2000;color:#FFB74D}}
+.theme-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:var(--rs);border:2px solid var(--b2);background:var(--card2);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.theme-btn:hover{border-color:var(--t2)}
+.theme-btn.active{border-color:var(--t);box-shadow:0 0 0 1px var(--t)}
+.theme-btn span:first-of-type{font-size:13px;font-weight:600;color:var(--t)}
+.theme-btn small{font-size:10px;color:var(--t2)}
+.theme-preview{width:40px;height:28px;border-radius:6px;display:block}
+.accent-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:var(--rs);border:2px solid var(--b2);background:var(--card2);cursor:pointer;transition:all .15s}
+.accent-btn:hover{border-color:var(--t2)}
+.accent-btn.active{border-color:var(--ac,#1A8C5F);box-shadow:0 0 0 1px var(--ac,#1A8C5F)}
+.accent-btn small{font-size:9px;color:var(--t2)}
+.accent-dot{width:22px;height:22px;border-radius:99px;display:block}
+.preset-btn:hover{transform:scale(1.02);box-shadow:0 4px 12px rgba(0,0,0,.15)}
 </style>
 </head>
 <body>
@@ -315,7 +344,80 @@ input[readonly]{opacity:.65;cursor:default}
   <!-- SETTINGS -->
   <div id="paneSettings" class="pane">
     <div class="card">
-      <div class="clabel">เป้าหมายแคลอรี่</div>
+      <div class="clabel">ธีมสำเร็จรูป</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" id="presetGrid"></div>
+    </div>
+    <div class="card">
+      <div class="clabel">โหมดพื้นฐาน</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0" id="themeGrid">
+        <button class="theme-btn" data-theme="auto" onclick="setTheme('auto')">
+          <span class="theme-preview" style="background:linear-gradient(135deg,#F7F6F2 50%,#141412 50%)"></span>
+          <span>Auto</span><small>ตาม OS</small>
+        </button>
+        <button class="theme-btn" data-theme="light" onclick="setTheme('light')">
+          <span class="theme-preview" style="background:#F7F6F2;border:1px solid #ddd"></span>
+          <span>Light</span><small>สว่าง</small>
+        </button>
+        <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">
+          <span class="theme-preview" style="background:#141412"></span>
+          <span>Dark</span><small>มืด</small>
+        </button>
+        <button class="theme-btn" data-theme="high-contrast" onclick="setTheme('high-contrast')">
+          <span class="theme-preview" style="background:#000;border:2px solid #fff"></span>
+          <span>High Contrast</span><small>คอนทราสต์สูง</small>
+        </button>
+        <button class="theme-btn" data-theme="colorblind" onclick="setTheme('colorblind')">
+          <span class="theme-preview" style="background:linear-gradient(135deg,#0072B2 33%,#E69F00 33% 66%,#CC79A7 66%)"></span>
+          <span>Colorblind</span><small>ตาบอดสี (สว่าง)</small>
+        </button>
+        <button class="theme-btn" data-theme="colorblind-dark" onclick="setTheme('colorblind-dark')">
+          <span class="theme-preview" style="background:linear-gradient(135deg,#141414 50%,#56B4E9 50%)"></span>
+          <span>Colorblind Dark</span><small>ตาบอดสี (มืด)</small>
+        </button>
+      </div>
+    </div>
+
+      <div class="card">
+      <div style="border-bottom:1px solid var(--b);padding-bottom:14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:600;color:var(--t3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px">สีหลัก (Accent)</div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px" id="accentGrid">
+          <button class="accent-btn" data-accent="default" onclick="setAccent('default')" style="--ac:#1A8C5F"><span class="accent-dot" style="background:#1A8C5F"></span><small>Default</small></button>
+          <button class="accent-btn" data-accent="blue" onclick="setAccent('blue')" style="--ac:#1A6FD4"><span class="accent-dot" style="background:#1A6FD4"></span><small>Blue</small></button>
+          <button class="accent-btn" data-accent="purple" onclick="setAccent('purple')" style="--ac:#7C3AED"><span class="accent-dot" style="background:#7C3AED"></span><small>Purple</small></button>
+          <button class="accent-btn" data-accent="pink" onclick="setAccent('pink')" style="--ac:#DB2777"><span class="accent-dot" style="background:#DB2777"></span><small>Pink</small></button>
+          <button class="accent-btn" data-accent="orange" onclick="setAccent('orange')" style="--ac:#EA580C"><span class="accent-dot" style="background:#EA580C"></span><small>Orange</small></button>
+          <button class="accent-btn" data-accent="teal" onclick="setAccent('teal')" style="--ac:#0891B2"><span class="accent-dot" style="background:#0891B2"></span><small>Teal</small></button>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <label style="font-size:12px;color:var(--t2);white-space:nowrap">กำหนดเอง</label>
+          <input type="color" id="customAccent" value="#1A8C5F" oninput="setAccentFromPicker(this.value)" style="width:44px;height:36px;padding:2px;border-radius:var(--rs);border:1px solid var(--b2);background:var(--card2);cursor:pointer">
+          <span id="accentHex" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--t2)">#1A8C5F</span>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--b);padding-top:14px">
+        <div style="font-size:12px;font-weight:600;color:var(--t3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px">สี Background</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+          <label style="font-size:12px;color:var(--t2);width:80px">พื้นหลัง</label>
+          <input type="color" id="pickerBg" oninput="applyCustomColor('bg',this.value)" style="width:44px;height:36px;padding:2px;border-radius:var(--rs);border:1px solid var(--b2);background:var(--card2);cursor:pointer">
+          <div style="display:flex;gap:6px;flex-wrap:wrap" id="bgPresets"></div>
+          <button onclick="resetColor('bg')" class="btn btn-sm btn-outline" style="font-size:11px;padding:5px 10px;white-space:nowrap">Reset</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+          <label style="font-size:12px;color:var(--t2);width:80px">Card</label>
+          <input type="color" id="pickerCard" oninput="applyCustomColor('card',this.value)" style="width:44px;height:36px;padding:2px;border-radius:var(--rs);border:1px solid var(--b2);background:var(--card2);cursor:pointer">
+          <div style="display:flex;gap:6px;flex-wrap:wrap" id="cardPresets"></div>
+          <button onclick="resetColor('card')" class="btn btn-sm btn-outline" style="font-size:11px;padding:5px 10px;white-space:nowrap">Reset</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <label style="font-size:12px;color:var(--t2);width:80px">ข้อความ</label>
+          <input type="color" id="pickerText" oninput="applyCustomColor('text',this.value)" style="width:44px;height:36px;padding:2px;border-radius:var(--rs);border:1px solid var(--b2);background:var(--card2);cursor:pointer">
+          <div style="display:flex;gap:6px;flex-wrap:wrap" id="textPresets"></div>
+          <button onclick="resetColor('text')" class="btn btn-sm btn-outline" style="font-size:11px;padding:5px 10px;white-space:nowrap">Reset</button>
+        </div>
+        <button onclick="resetAllColors()" class="btn btn-outline" style="width:100%;margin-top:12px;font-size:13px">Reset สีทั้งหมด</button>
+      </div>
+    </div>
       <div class="settings-row"><div><div class="settings-lbl">แคลต่ำสุด (kcal)</div></div><input type="number" id="sMin" value="2174" inputmode="numeric" onchange="saveSettings()"></div>
       <div class="settings-row"><div><div class="settings-lbl">แคลสูงสุด (kcal)</div></div><input type="number" id="sMax" value="2674" inputmode="numeric" onchange="saveSettings()"></div>
     </div>
@@ -944,7 +1046,223 @@ function doCopyDay(){
   renderLog();showToast(`ก็อปเมนูจาก ${kDisp(copySourceKey)} แล้ว`);
 }
 
-// Export / Import backup
+// Theme
+const ACCENTS={
+  'default':{h:'#1A8C5F',hbg:'#E8F5EE',ht:'#0F5C3C'},
+  'blue':   {h:'#1A6FD4',hbg:'#E6F0FB',ht:'#0D3D73'},
+  'purple': {h:'#7C3AED',hbg:'#F0EBFF',ht:'#4C1D95'},
+  'pink':   {h:'#DB2777',hbg:'#FDE7F3',ht:'#831843'},
+  'orange': {h:'#EA580C',hbg:'#FEF0E8',ht:'#7C2D12'},
+  'teal':   {h:'#0891B2',hbg:'#E0F7FA',ht:'#164E63'},
+};
+function hexToRgb(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return{r,g,b};
+}
+function lightenHex(hex,amount=0.9){
+  const{r,g,b}=hexToRgb(hex);
+  const lr=Math.round(r+(255-r)*amount);
+  const lg=Math.round(g+(255-g)*amount);
+  const lb=Math.round(b+(255-b)*amount);
+  return`#${lr.toString(16).padStart(2,'0')}${lg.toString(16).padStart(2,'0')}${lb.toString(16).padStart(2,'0')}`;
+}
+function darkenHex(hex,amount=0.5){
+  const{r,g,b}=hexToRgb(hex);
+  return`#${Math.round(r*amount).toString(16).padStart(2,'0')}${Math.round(g*amount).toString(16).padStart(2,'0')}${Math.round(b*amount).toString(16).padStart(2,'0')}`;
+}
+function applyAccent(hex){
+  const root=document.documentElement;
+  const bg=lightenHex(hex,0.88);
+  const dark=darkenHex(hex,0.55);
+  root.style.setProperty('--green',hex);
+  root.style.setProperty('--gbg',bg);
+  root.style.setProperty('--gt',dark);
+  // อัปเดต btn-green ด้วย
+  const style=document.getElementById('accentStyle')||document.createElement('style');
+  style.id='accentStyle';
+  style.textContent=`.btn-green{background:${hex}!important}.tab.active{border-bottom-color:${hex}!important;color:${hex}!important}`;
+  document.head.appendChild(style);
+}
+function setAccent(name){
+  localStorage.setItem('ct4_accent',name);
+  localStorage.removeItem('ct4_accent_custom');
+  const a=ACCENTS[name]||ACCENTS['default'];
+  applyAccent(a.h);
+  g('customAccent').value=a.h;
+  g('accentHex').textContent=a.h;
+  updateAccentBtns(name);
+  showToast('เปลี่ยนสีแล้ว');
+}
+function setAccentFromPicker(hex){
+  localStorage.setItem('ct4_accent','custom');
+  localStorage.setItem('ct4_accent_custom',hex);
+  applyAccent(hex);
+  g('accentHex').textContent=hex;
+  updateAccentBtns('custom');
+}
+function updateAccentBtns(name){
+  document.querySelectorAll('.accent-btn').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.accent===name);
+  });
+}
+function setTheme(theme){
+  localStorage.setItem('ct4_theme',theme);
+  applyTheme(theme);
+  updateThemeBtns(theme);
+  showToast('เปลี่ยนธีมแล้ว');
+}
+function applyTheme(theme){
+  const el=document.documentElement;
+  if(theme==='auto'){el.removeAttribute('data-theme');}
+  else{el.setAttribute('data-theme',theme);}
+}
+function updateThemeBtns(theme){
+  document.querySelectorAll('.theme-btn').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.theme===theme);
+  });
+}
+function loadTheme(){
+  const theme=localStorage.getItem('ct4_theme')||'auto';
+  applyTheme(theme);
+  // accent
+  const accentName=localStorage.getItem('ct4_accent')||'default';
+  const customHex=localStorage.getItem('ct4_accent_custom');
+  if(accentName==='custom'&&customHex){
+    applyAccent(customHex);
+    if(g('customAccent')){g('customAccent').value=customHex;g('accentHex').textContent=customHex;}
+  } else {
+    const a=ACCENTS[accentName]||ACCENTS['default'];
+    applyAccent(a.h);
+    if(g('customAccent')){g('customAccent').value=a.h;g('accentHex').textContent=a.h;}
+  }
+  // custom colors
+  loadCustomColors();
+}
+
+// Preset themes
+const PRESETS=[
+  {id:'default',name:'Default',emoji:'☀️',bg:'#F7F6F2',card:'#FFFFFF',text:'#1C1B18',accent:'default'},
+  {id:'midnight',name:'Midnight',emoji:'🌙',bg:'#0D1117',card:'#161B22',text:'#E6EDF3',accent:'blue',accentHex:'#58A6FF'},
+  {id:'forest',name:'Forest',emoji:'🌿',bg:'#1A2416',card:'#243320',text:'#D4EAC8',accent:'default',accentHex:'#4ADE80'},
+  {id:'ocean',name:'Ocean',emoji:'🌊',bg:'#0A192F',card:'#112240',text:'#CCD6F6',accent:'teal',accentHex:'#64FFDA'},
+  {id:'sunset',name:'Sunset',emoji:'🌅',bg:'#FFF5F0',card:'#FFFFFF',text:'#2D1B14',accent:'orange',accentHex:'#EA580C'},
+  {id:'lavender',name:'Lavender',emoji:'💜',bg:'#F5F0FF',card:'#FFFFFF',text:'#2D1B69',accent:'purple',accentHex:'#7C3AED'},
+  {id:'rose',name:'Rose',emoji:'🌹',bg:'#FFF0F3',card:'#FFFFFF',text:'#3D1520',accent:'pink',accentHex:'#E11D48'},
+  {id:'charcoal',name:'Charcoal',emoji:'🖤',bg:'#1C1C1E',card:'#2C2C2E',text:'#EBEBF5',accent:'default',accentHex:'#30D158'},
+  {id:'cream',name:'Cream',emoji:'🍦',bg:'#FFFBF0',card:'#FFF8E7',text:'#3D2B00',accent:'amber',accentHex:'#B45309'},
+  {id:'slate',name:'Slate',emoji:'🪨',bg:'#0F172A',card:'#1E293B',text:'#E2E8F0',accent:'blue',accentHex:'#38BDF8'},
+  {id:'sakura',name:'Sakura',emoji:'🌸',bg:'#FFF0F7',card:'#FFFFFF',text:'#4A0020',accent:'pink',accentHex:'#F472B6'},
+  {id:'matrix',name:'Matrix',emoji:'💚',bg:'#0D0D0D',card:'#111111',text:'#00FF41',accent:'default',accentHex:'#00FF41'},
+];
+
+function renderPresetGrid(){
+  const pg=g('presetGrid');if(!pg)return;
+  const saved=localStorage.getItem('ct4_preset')||'default';
+  pg.innerHTML=PRESETS.map(p=>`
+    <button class="preset-btn ${p.id===saved?'active':''}" data-preset="${p.id}" onclick="applyPreset('${p.id}')"
+      style="background:${p.bg};border:2px solid ${p.id===saved?p.accentHex||'#1A8C5F':'rgba(0,0,0,.12)'};border-radius:var(--rs);padding:10px;cursor:pointer;transition:all .2s;text-align:left;position:relative;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <span style="font-size:16px">${p.emoji}</span>
+        <span style="font-size:13px;font-weight:600;color:${p.text}">${p.name}</span>
+        ${p.id===saved?'<span style="font-size:9px;background:'+( p.accentHex||'#1A8C5F')+';color:#fff;padding:1px 6px;border-radius:99px;margin-left:auto">✓</span>':''}
+      </div>
+      <div style="display:flex;gap:4px">
+        <div style="flex:1;height:6px;border-radius:99px;background:${p.accentHex||'#1A8C5F'}"></div>
+        <div style="flex:1;height:6px;border-radius:99px;background:${p.text};opacity:.3"></div>
+        <div style="flex:1;height:6px;border-radius:99px;background:${p.card};border:1px solid rgba(0,0,0,.1)"></div>
+      </div>
+    </button>`).join('');
+}
+
+function applyPreset(id){
+  const p=PRESETS.find(x=>x.id===id);if(!p)return;
+  localStorage.setItem('ct4_preset',id);
+  // reset custom colors ก่อน
+  localStorage.removeItem('ct4_colors');
+  const root=document.documentElement;
+  ['--bg','--card','--card2','--t','--t2'].forEach(v=>root.style.removeProperty(v));
+  // apply theme mode
+  if(p.bg.startsWith('#0')||p.bg.startsWith('#1')||p.bg==='#0D0D0D'){
+    applyTheme('dark');localStorage.setItem('ct4_theme','dark');
+  } else {
+    applyTheme('light');localStorage.setItem('ct4_theme','light');
+  }
+  // apply colors
+  applyCustomColor('bg',p.bg);
+  applyCustomColor('card',p.card);
+  applyCustomColor('text',p.text);
+  // apply accent
+  if(p.accentHex){
+    localStorage.setItem('ct4_accent','custom');
+    localStorage.setItem('ct4_accent_custom',p.accentHex);
+    applyAccent(p.accentHex);
+    if(g('customAccent')){g('customAccent').value=p.accentHex;g('accentHex').textContent=p.accentHex;}
+  } else {
+    setAccent(p.accent);
+  }
+  renderPresetGrid();
+  showToast(`${p.emoji} ${p.name} theme แล้ว`);
+}
+const COLOR_PRESETS={
+  bg:['#F7F6F2','#FFFFFF','#F0F4F8','#1A1A2E','#141412','#0D1117','#1E1B2E','#0F2027'],
+  card:['#FFFFFF','#F5F5F5','#E8F0FE','#1E1D1A','#16213E','#161B22','#252525','#1A1A2E'],
+  text:['#1C1B18','#000000','#2D3748','#F0EFE9','#FFFFFF','#E2E8F0','#CDD6F4','#89B4FA'],
+};
+function initColorPresets(){
+  ['bg','card','text'].forEach(type=>{
+    const el=g(type+'Presets');if(!el)return;
+    el.innerHTML=COLOR_PRESETS[type].map(c=>`
+      <button onclick="applyCustomColor('${type}','${c}')" title="${c}"
+        style="width:22px;height:22px;border-radius:6px;border:1.5px solid var(--b2);background:${c};cursor:pointer;flex-shrink:0;transition:transform .1s"
+        onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+      </button>`).join('');
+  });
+}
+function applyCustomColor(type,hex){
+  const root=document.documentElement;
+  const saved=JSON.parse(localStorage.getItem('ct4_colors')||'{}');
+  saved[type]=hex;
+  localStorage.setItem('ct4_colors',JSON.stringify(saved));
+  if(type==='bg'){
+    root.style.setProperty('--bg',hex);
+    // card2 derive จาก bg
+    const{r,g:gv,b}=hexToRgb(hex);
+    const isDark=(r*299+gv*587+b*114)/1000<128;
+    root.style.setProperty('--card2',isDark?lightenHex(hex,0.1):darkenHex(hex,0.95));
+    if(g('pickerBg'))g('pickerBg').value=hex;
+  }
+  if(type==='card'){root.style.setProperty('--card',hex);if(g('pickerCard'))g('pickerCard').value=hex;}
+  if(type==='text'){
+    root.style.setProperty('--t',hex);
+    const{r,gv:gVal,b}=hexToRgb(hex);
+    root.style.setProperty('--t2',hex+'99');
+    if(g('pickerText'))g('pickerText').value=hex;
+  }
+}
+function resetColor(type){
+  const saved=JSON.parse(localStorage.getItem('ct4_colors')||'{}');
+  delete saved[type];
+  localStorage.setItem('ct4_colors',JSON.stringify(saved));
+  const root=document.documentElement;
+  if(type==='bg')root.style.removeProperty('--bg');
+  if(type==='card')root.style.removeProperty('--card');
+  if(type==='text'){root.style.removeProperty('--t');root.style.removeProperty('--t2');}
+  loadCustomColors();
+  showToast('Reset สีแล้ว');
+}
+function resetAllColors(){
+  localStorage.removeItem('ct4_colors');
+  const root=document.documentElement;
+  ['--bg','--card','--card2','--t','--t2'].forEach(v=>root.style.removeProperty(v));
+  loadCustomColors();
+  showToast('Reset สีทั้งหมดแล้ว');
+}
+function loadCustomColors(){
+  const saved=JSON.parse(localStorage.getItem('ct4_colors')||'{}');
+  if(saved.bg)applyCustomColor('bg',saved.bg);
+  if(saved.card)applyCustomColor('card',saved.card);
+  if(saved.text)applyCustomColor('text',saved.text);
+}
 function exportData(){
   const data={
     version:1,
@@ -1142,11 +1460,45 @@ function switchTab(tab,btn){
   if(tab==='History')renderHistory();
   if(tab==='Trend')renderTrend();
   if(tab==='Body'){initBodyDate();renderBodyCharts();}
+  if(tab==='Settings'){
+    updateThemeBtns(localStorage.getItem('ct4_theme')||'auto');
+    updateAccentBtns(localStorage.getItem('ct4_accent')||'default');
+    const customHex=localStorage.getItem('ct4_accent_custom');
+    const accentName=localStorage.getItem('ct4_accent')||'default';
+    const a=accentName==='custom'&&customHex?customHex:(ACCENTS[accentName]||ACCENTS['default']).h;
+    if(g('customAccent')){g('customAccent').value=a;g('accentHex').textContent=a;}
+    renderPresetGrid();
+    initColorPresets();
+    const saved=JSON.parse(localStorage.getItem('ct4_colors')||'{}');
+    if(g('pickerBg'))g('pickerBg').value=saved.bg||'#F7F6F2';
+    if(g('pickerCard'))g('pickerCard').value=saved.card||'#FFFFFF';
+    if(g('pickerText'))g('pickerText').value=saved.text||'#1C1B18';
+  }
   if(tab==='Foods'){renderCustomFoods();renderDBList();}
 }
 
+// Service Worker
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      // เช็คอัปเดตทุกครั้งที่เปิดแอพ
+      reg.update();
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => {
+          if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
+            // มีเวอร์ชันใหม่ — แจ้งผู้ใช้
+            showToast('มีอัปเดตใหม่! เปิดแอพใหม่เพื่อโหลด');
+            setTimeout(() => window.location.reload(), 3000);
+          }
+        });
+      });
+    });
+  });
+}
+
 // init
-loadSettings();initDate();renderLog();
+loadTheme();loadSettings();initDate();renderLog();
 </script>
 </body>
 </html>
