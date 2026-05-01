@@ -1477,26 +1477,6 @@ function switchTab(tab,btn){
   if(tab==='Foods'){renderCustomFoods();renderDBList();}
 }
 
-// Service Worker
-if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').then(reg => {
-      // เช็คอัปเดตทุกครั้งที่เปิดแอพ
-      reg.update();
-      reg.addEventListener('updatefound', () => {
-        const newWorker = reg.installing;
-        newWorker.addEventListener('statechange', () => {
-          if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
-            // มีเวอร์ชันใหม่ — แจ้งผู้ใช้
-            showToast('มีอัปเดตใหม่! เปิดแอพใหม่เพื่อโหลด');
-            setTimeout(() => window.location.reload(), 3000);
-          }
-        });
-      });
-    });
-  });
-}
-
 // init
 loadTheme();loadSettings();initDate();renderLog();
 </script>
